@@ -13,6 +13,8 @@ def throw_kocherga(peer_id, from_id):
 
     with conn:
         date = dbm.get_kocherga_date(conn, from_id)
+        if date is None:
+            return
         if date[0] == 'None':
             new_date = datetime.datetime.now()
             dbm.set_kocherga_date(conn, from_id, new_date)

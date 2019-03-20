@@ -33,7 +33,7 @@ def handle_request(request):
         if any(name in event['object']['text'].lower() for name in faris_names):
             for comand in comands_list:
                 if comand in event['object']['text'].lower():
-                    if comand == 'регистрация' or comand == 'удали меня' or 'кочерг':
+                    if comand == 'регистрация' or comand == 'удали меня' or comand == 'кочерг':
                         comands_list[comand](peer_id, from_id)
                     elif comand == 'бой':
                         comands_list[comand](peer_id, from_id, event['object']['text'])
