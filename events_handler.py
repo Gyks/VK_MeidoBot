@@ -28,12 +28,17 @@ def handle_request(request):
     event = json.loads(request)
     peer_id = event['object']['peer_id']
     from_id = event['object']['from_id']
+    peer_from_comands = [
+        'регистрация',
+        'удали меня',
+        'кочерг'
+    ]
 
     if 'message_new' in event['type']:
         if any(name in event['object']['text'].lower() for name in faris_names):
             for comand in comands_list:
                 if comand in event['object']['text'].lower():
-                    if comand == 'регистрация' or comand == 'удали меня' or comand == 'кочерг':
+                    if comand in peer_from_comands:
                         comands_list[comand](peer_id, from_id)
                     elif comand == 'бой':
                         comands_list[comand](peer_id, from_id, event['object']['text'])
