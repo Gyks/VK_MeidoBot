@@ -41,7 +41,15 @@ def send_rndpic_from_wall(peer_id):
     link = 'photo-'
     link += rnd_single_group + '_'
     link += str(item['id'])
-    vk_methods.send_message('Я нашла это на помойке... ня!', peer_id, link)
+    messages = [
+        'Я нашла это на помойке... ня!',
+        'Ня! Вот ваша картинка!',
+        'Картинку заказывали, ня?',
+        'Вам правда это так нужно, ня?',
+        'Ня! Это выглядит странно!',
+        'Nice meme, nya!'
+    ]
+    vk_methods.send_message(random.choice(messages), peer_id, link)
 
 def screenshot(peer_id):
     groups_list = [
