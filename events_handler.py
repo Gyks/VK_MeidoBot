@@ -2,6 +2,7 @@ import vk_methods
 import json
 import comands
 import Games
+from config import *
 
 
 
@@ -14,7 +15,8 @@ comands_list = {
     'привет': comands.hello_faris,
     'пока': comands.bye_faris,
     'idealgf': comands.ideal_gf,
-    'картинк': comands.send_rndpic_from_wall,
+    'картинк': comands.get_random_picture(0),
+    'левд': comands.get_random_picture(1),
     'скрин': comands.screenshot,
     'регистрация': comands.db_register_user,
     'удали меня': comands.db_delete_user,

@@ -20,36 +20,50 @@ def bye_faris(peer_id):
     vk_methods.send_message(message, peer_id, '0')
 
 def ideal_gf(peer_id):
-    # chat_obj = vk_methods.get_chat(int(peer_id) - 2000000000)
     item = random.choice(vk_methods.get_photos('-129440544', '248976186', 0, 0, 0, 1, 999)['response']['items'])
     link = 'photo-'
     link += '129440544_'
     link += str(item['id'])
     vk_methods.send_message('Твоя идеальная тян, ня!', peer_id, link)
-    # vk_methods.send_message(str(chat_obj), peer_id, '0')
 
-def send_rndpic_from_wall(peer_id):
-    groups_list = [
-        '163820739',
-        '129440544',
-        '174289700',
-        '163058008',
-        '103429263'
+def get_random_picture(group_type):
+    def send_rndpic_from_wall(peer_id, group_type=group_type):
+        groups_list = [
+                # basic memes groups list
+                [
+                    '163820739',
+                    '129440544',
+                    '174289700',
+                    '163058008',
+                    '103429263'
+                ],
+                # lewd groups list
+                [
+                    '155256139',
+                    '150499600',
+                    '117383951',
+                    '169213960',
+                    '146067881',
+                    '155735212'
+
+                ],
+                # another shite that may be added in future
+            ]
+        rnd_single_group = random.choice(groups_list[group_type])
+        item = random.choice(vk_methods.get_photos('-' + rnd_single_group, 'wall', 0, 0, 0, random.randint(1, 50), 999)['response']['items'])
+        link = 'photo-'
+        link += rnd_single_group + '_'
+        link += str(item['id'])
+        messages = [
+            'Я нашла это на помойке... ня!',
+            'Ня! Вот ваша картинка!',
+            'Картинку заказывали, ня?',
+            'Вам правда это так нужно, ня?',
+            'Ня! Это выглядит странно!',
+            'Nice meme, nya!'
         ]
-    rnd_single_group = random.choice(groups_list)
-    item = random.choice(vk_methods.get_photos('-' + rnd_single_group, 'wall', 0, 0, 0, random.randint(1, 50), 999)['response']['items'])
-    link = 'photo-'
-    link += rnd_single_group + '_'
-    link += str(item['id'])
-    messages = [
-        'Я нашла это на помойке... ня!',
-        'Ня! Вот ваша картинка!',
-        'Картинку заказывали, ня?',
-        'Вам правда это так нужно, ня?',
-        'Ня! Это выглядит странно!',
-        'Nice meme, nya!'
-    ]
-    vk_methods.send_message(random.choice(messages), peer_id, link)
+        vk_methods.send_message(random.choice(messages), peer_id, link)
+    return send_rndpic_from_wall
 
 def screenshot(peer_id):
     groups_list = [
@@ -124,4 +138,3 @@ def fight_user(peer_id, from_id, text):
                 vk_methods.send_message(f'Я не понимаю, ня! Возможно цель не зарегестрирована!', peer_id, '0')
     else:
         vk_methods.send_message(f'Я не понимаю, ня! Возможно цель не зарегестрирована!', peer_id, '0')
-    #[id101081222|@mrgyks]

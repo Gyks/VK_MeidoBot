@@ -9,7 +9,6 @@ def application(env, start_response):
     request_body = request_body.decode('utf-8')
 
     # comment try except to get info
-
     try:
         events_handler.handle_request(request_body)
     except KeyError:
