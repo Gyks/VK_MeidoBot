@@ -19,10 +19,11 @@ comands_list = {
     'левд': comands.get_random_picture(1),
     'скрин': comands.screenshot,
     'регистрация': comands.db_register_user,
-    'удали меня': comands.db_delete_user,
+    'удали меня8989': comands.db_delete_user,
     'случайный': comands.get_random_user,
     'бой': comands.fight_user,
-    'кочерг': Games.throw_kocherga
+    'кочерг': Games.throw_kocherga,
+    'топ': comands.fetch_vk_top
 }
 
 

@@ -44,8 +44,8 @@ def get_random_picture(group_type):
                     '117383951',
                     '169213960',
                     '146067881',
-                    '155735212'
-
+                    '155735212',
+                    '148396616'
                 ],
                 # another shite that may be added in future
             ]
@@ -115,6 +115,16 @@ def get_random_user(peer_id):
         vk_methods.send_message(f'{res[1]}, ня!', peer_id, '0')
     except:
         vk_methods.send_message(f'Я не понимаю, ня!', peer_id, '0')
+
+
+def fetch_vk_top(peer_id):
+    conn = dbm.create_connection("users.db")
+    res = dbm.fetch_top(conn)
+    result = 'Топ-жоп:\n'
+    for item in res:
+        result += f'{item[0]} - ОК:{item[1]}, ЗК:{item[2]} \n'
+    vk_methods.send_message(result, peer_id, '0')
+
 
 
 def fight_user(peer_id, from_id, text):

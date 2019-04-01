@@ -106,6 +106,16 @@ def add_win(conn, user_id):
     cur.execute(sql)
 
 
+def fetch_top(conn):
+    cur = conn.cursor()
+    sql = f'''SELECT name, kocherga_common, kocherga_common_gold FROM registered_users ORDER BY kocherga_common_gold DESC,kocherga_common DESC;'''
+    cur.execute(sql)
+
+    rows = cur.fetchall()
+    # print(rows)
+    return rows
+
+
 if __name__ == '__main__':
     conn = create_connection("users.db")
     create_table(conn, sql_create_new_table)
