@@ -12,16 +12,13 @@ secret_names = ['rumiho', 'akiha', 'румихо', 'акиха']
 
 # Comands block
 comands_list = {
-    'привет': comands.hello_faris,
-    'пока': comands.bye_faris,
+    'помощь': comands.hello_faris,
+    'до свидания': comands.bye_faris,
     'idealgf': comands.ideal_gf,
     'картинк': comands.get_random_picture(0),
     'левд': comands.get_random_picture(1),
     'скрин': comands.screenshot,
     'регистрация': comands.db_register_user,
-    'удали меня8989': comands.db_delete_user,
-    'случайный': comands.get_random_user,
-    'бой': comands.fight_user,
     'кочерг': Games.throw_kocherga,
     'топ': comands.fetch_vk_top
 }
@@ -33,7 +30,6 @@ def handle_request(request):
     from_id = event['object']['from_id']
     peer_from_comands = [
         'регистрация',
-        'удали меня',
         'кочерг'
     ]
 
