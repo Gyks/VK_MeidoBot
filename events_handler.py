@@ -11,7 +11,7 @@ faris_names = ['faris', 'фейрис', 'фэйрис', 'няннян', 'нян'
 secret_names = ['rumiho', 'akiha', 'румихо', 'акиха']
 
 # Comands block
-comands_list = {
+'''comands_list = {
     'помощь': comands.hello_faris,
     'до свидания': comands.bye_faris,
     'idealgf': comands.ideal_gf,
@@ -20,7 +20,22 @@ comands_list = {
     'скрин': comands.screenshot,
     'регистрация': comands.db_register_user,
     'кочерг': Games.throw_kocherga,
-    'топ': comands.fetch_vk_top
+    'топ': comands.fetch_vk_top,
+    'лучшие': comands.fetch_vk_best_top
+}'''
+
+
+comands_list = {
+    'помощь': comands.hello_faris,
+    'до свидания': comands.bye_faris,
+    'idealgf': comands.ideal_gf,
+    'картинк': comands.get_random_picture(0),
+    'левд': comands.get_random_picture(1),
+    'скрин': comands.screenshot,
+    'регистрация': comands.db_register_user,
+    'кочерг': comands.fetch_vk_best_top,
+    'топ': comands.fetch_vk_best_top,
+    'лучшие': comands.fetch_vk_best_top
 }
 
 
@@ -30,7 +45,7 @@ def handle_request(request):
     from_id = event['object']['from_id']
     peer_from_comands = [
         'регистрация',
-        'кочерг'
+        # 'кочерг'
     ]
 
     if 'message_new' in event['type']:

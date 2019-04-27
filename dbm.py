@@ -116,6 +116,15 @@ def fetch_top(conn):
     return rows
 
 
+def fetch_best(conn):
+    cur = conn.cursor()
+    sql = f'''select name, wins from registered_users order by wins desc;'''
+    cur.execute(sql)
+
+    rows = cur.fetchall()
+    return rows
+
+
 if __name__ == '__main__':
     conn = create_connection("users.db")
     create_table(conn, sql_create_new_table)

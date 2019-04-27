@@ -121,10 +121,25 @@ def fetch_vk_top(peer_id):
     conn = dbm.create_connection("users.db")
     res = dbm.fetch_top(conn)
     result = 'Топ-жоп:\n'
-    for item in res:
-        result += f'{item[0]} - ОК:{item[1]}, ЗК:{item[2]} \n'
+    for i in range(3):
+        result += f'{res[0]} - ОК:{res[1]}, ЗК:{res[2]} \n'
     vk_methods.send_message(result, peer_id, '0')
 
+
+def fetch_vk_best_top(peer_id):
+    conn = dbm.create_connection("users.db")
+    res = dbm.fetch_best(conn)
+    result = 'Второй сезон окончен.'
+    result += '\nТоп-метателей:\n'
+    for i in range(3):
+        result += f'{res[i][0]} - Бросков: {res[i][1]} \n'
+
+    res = dbm.fetch_top(conn)
+    result += '\nТоп-жоп:\n'
+    for i in range(3):
+        result += f'{res[i][0]} - ОК:{res[i][1]}, ЗК:{res[i][2]} \n'
+
+    vk_methods.send_message(result, peer_id, '0')
 
 
 def fight_user(peer_id, from_id, text):
