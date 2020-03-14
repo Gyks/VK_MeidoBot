@@ -59,7 +59,29 @@ async function uploadPhotoViaUrlAsync(peer_id, photoUrl, callback) {
   photoInfo = saveMessagesPhoto.data.response[0];
   callback(photoInfo);
 }
+
+async function getPhoto(owner_id, album_id) {
+  let offset = Math.floor(Math.random() * 9899);
+  let url = baseUrl + "photos.get";
+  const body = await axios.get(url, {
+    params: {
+      owner_id: owner_id,
+      offset: offset,
+      album_id: album_id,
+      random_id: Math.random(),
+      count: 1,
+      access_token:
+        "e638637de638637de638637d65e667c14dee638e638637dbc2b0bc46541aa33ce5752d5", //сервисный, потом вынести в .env
+      v: v
+    }
+  });
+  let photo = body.data.response.items[0];
+  photo = "photo" + photo.owner_id + "_" + photo.id;
+  return photo;
+}
+
 module.exports = {
   sendMessage: sendMessage,
-  uploadPhotoViaUrlAsync: uploadPhotoViaUrlAsync
+  uploadPhotoViaUrlAsync: uploadPhotoViaUrlAsync,
+  getPhoto: getPhoto
 };
