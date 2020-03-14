@@ -10,7 +10,9 @@ const commandsList = {
   найди: findPicture,
   гача: simulateGacha,
   техас: sendTexas,
-  еще: someMore
+  еще: someMore,
+  ещё: someMore,
+  мейдочку: sendMaid
 };
 
 async function findPicture(msgInfoObject, picUrl) {
@@ -106,7 +108,10 @@ async function findPicture(msgInfoObject, picUrl) {
   };
 
   // если команда расширенная, то ищем ещё одну картинку с этим автором и кидаем
-  if (msgInfoObject.text.includes("еще")) {
+  if (
+    msgInfoObject.text.includes("еще") ||
+    msgInfoObject.text.includes("ещё")
+  ) {
     for (let picLink of pictureLinks) {
       const anotherPic = await findArtistSendAnotherPic(picLink);
       if (anotherPic && anotherPic.url) {
@@ -202,6 +207,12 @@ async function someMore(msgInfoObject) {
         photoInfo.access_key
     );
   });
+}
+
+async function sendMaid(msgInfoObject) {
+  let photo = await vkMethods.getPhoto("-78638180", "wall");
+
+  vkMethods.sendMessage(msgInfoObject.peer_id, "Ваша мейдочка!", photo);
 }
 
 module.exports = commandsList;
