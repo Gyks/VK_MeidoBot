@@ -9,7 +9,8 @@ const axios = require("axios");
 const commandsList = {
   найди: findPicture,
   гача: simulateGacha,
-  техас: sendTexas
+  техас: sendTexas,
+  еще: someMore
 };
 
 async function findPicture(msgInfoObject, picUrl) {
@@ -101,21 +102,21 @@ async function findPicture(msgInfoObject, picUrl) {
         }
       }
     );
-    return anotherPic.data[0].large_file_url;
+    return { url: anotherPic.data[0].large_file_url, artist: artist };
   };
 
   // если команда расширенная, то ищем ещё одну картинку с этим автором и кидаем
   if (msgInfoObject.text.includes("еще")) {
     for (let picLink of pictureLinks) {
-      const anotherPicUrl = await findArtistSendAnotherPic(picLink);
-      if (anotherPicUrl) {
+      const anotherPic = await findArtistSendAnotherPic(picLink);
+      if (anotherPic && anotherPic.url) {
         vkMethods.uploadPhotoViaUrlAsync(
           msgInfoObject.peer_id,
-          anotherPicUrl,
+          anotherPic.url,
           photoInfo => {
             vkMethods.sendMessage(
               msgInfoObject.peer_id,
-              "Я ещё кое-что нашла!",
+              "Я ещё кое-что нашла! \n" + anotherPic.artist,
               "photo" +
                 photoInfo.owner_id +
                 "_" +
@@ -170,6 +171,37 @@ async function sendTexas(msgInfoObject) {
       );
     }
   );
+}
+
+async function someMore(msgInfoObject) {
+  let artist;
+  let text = msgInfoObject.reply_message.text;
+  if (text.includes("Я ещё кое-что нашла!") || text.includes("ЕЩЁ!"))
+    artist = text.split("\n")[1];
+  else return;
+  const anotherPic = await axios.get("https://danbooru.donmai.us/posts.json", {
+    params: {
+      login: login,
+      api_key: api_key,
+      tags: artist,
+      limit: 1,
+      random: true
+    }
+  });
+  let picUrl = anotherPic.data[0].large_file_url;
+  console.log(artist);
+  vkMethods.uploadPhotoViaUrlAsync(msgInfoObject.peer_id, picUrl, photoInfo => {
+    vkMethods.sendMessage(
+      msgInfoObject.peer_id,
+      "ЕЩЁ! \n" + artist,
+      "photo" +
+        photoInfo.owner_id +
+        "_" +
+        photoInfo.id +
+        "_" +
+        photoInfo.access_key
+    );
+  });
 }
 
 module.exports = commandsList;
