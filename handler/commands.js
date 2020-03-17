@@ -3,16 +3,19 @@ const vkMethods = require("./vkApiMethods");
 const fgo = require("./fgoGacha");
 const api_key = process.env.API_TOKEN_DANBOORU;
 const login = process.env.DANBOORU_LOGIN;
+const sauce_api_key = process.env.SAUCE_NAO_TOKEN;
 const HTMLParser = require("node-html-parser");
 const axios = require("axios");
 
 const commandsList = {
   найди: findPicture,
+  поищи: betterPictureFind,
   гача: simulateGacha,
   техас: sendTexas,
   еще: someMore,
   ещё: someMore,
-  мейдочку: sendMaid
+  мейдочку: sendMaid,
+  help: sendHelp
 };
 
 async function findPicture(msgInfoObject, picUrl) {
@@ -213,6 +216,53 @@ async function sendMaid(msgInfoObject) {
   let photo = await vkMethods.getPhoto("-78638180", "wall");
 
   vkMethods.sendMessage(msgInfoObject.peer_id, "Ваша мейдочка!", photo);
+}
+
+async function betterPictureFind(msgInfoObject, picUrl) {
+  if (picUrl && picUrl.includes("https://")) {
+  } else if (msgInfoObject.attachments.length) {
+    picUrl = msgInfoObject.attachments[0].photo.sizes.slice(-1)[0].url;
+  } else if (msgInfoObject.reply_message.attachments.length) {
+    picUrl = msgInfoObject.reply_message.attachments[0].photo.sizes.slice(-1)[0]
+      .url;
+  } else {
+    vkMethods.sendMessage(msgInfoObject.peer_id, "Неправилный запрос.");
+    return;
+  }
+  const result = await axios.get("https://saucenao.com/search.php", {
+    params: {
+      output_type: 2,
+      api_key: sauce_api_key,
+      db: 999,
+      numres: 5,
+      url: picUrl
+    }
+  });
+  let message = "Ваша мейдочка нашла это:\n";
+  for (let item of result.data.results) {
+    console.log(item);
+    if (item.data.ext_urls != undefined) message += item.data.ext_urls[0];
+    if (item.data.titleundefined) {
+      message += " " + item.data.title;
+    } else if (item.data.source) {
+      message += " " + item.data.source;
+    }
+    message += " с вероятностью " + item.header.similarity + "%\n";
+  }
+  vkMethods.sendMessage(msgInfoObject.peer_id, message);
+}
+
+async function sendHelp(msgInfoObject) {
+  const helpMessage = `Доброго здоровья, Хозяин, я умею следующее:
+  \n1)<найди> - я пытаюсь найти соус аниме-картинки.
+  \n2)<поищи> - тщательно ищу соус, косплей, додзю, мангу.
+  \n3)<гача> - гранд-ролл в ФГО
+  \n4)<техас> - отправляю картинку texas из arknights
+  \n5)<найди еще> - если я найду автора картинки, то отправлю его случайную работу
+  \n6)<еще> - если есть имя автора после <найди еще> или <еще> я повторю команду
+  \n7)<мейдочку> - отправлю картинку милой мейды
+  \n PS: Ваши картинки я беру из аттачей и реплаев`;
+  vkMethods.sendMessage(msgInfoObject.peer_id, helpMessage);
 }
 
 module.exports = commandsList;

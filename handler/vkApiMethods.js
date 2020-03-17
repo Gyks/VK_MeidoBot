@@ -3,6 +3,7 @@ const FormData = require("form-data");
 const baseUrl = "https://api.vk.com/method/";
 require("dotenv").config({ path: "../.env" });
 const TOKEN = process.env.TOKEN;
+const SERVICE_TOKEN = process.env.SERVICE_TOKEN;
 const v = "5.103";
 
 async function sendMessage(peer_id, message, attachment) {
@@ -70,8 +71,7 @@ async function getPhoto(owner_id, album_id) {
       album_id: album_id,
       random_id: Math.random(),
       count: 1,
-      access_token:
-        "e638637de638637de638637d65e667c14dee638e638637dbc2b0bc46541aa33ce5752d5", //сервисный, потом вынести в .env
+      access_token: SERVICE_TOKEN,
       v: v
     }
   });
