@@ -15,7 +15,8 @@ const commandsList = {
   еще: someMore,
   ещё: someMore,
   мейдочку: sendMaid,
-  help: sendHelp
+  help: sendHelp,
+  тяночку: sendGirl
 };
 
 async function findPicture(msgInfoObject, picUrl) {
@@ -216,6 +217,14 @@ async function sendMaid(msgInfoObject) {
   let photo = await vkMethods.getPhoto("-78638180", "wall");
 
   vkMethods.sendMessage(msgInfoObject.peer_id, "Ваша мейдочка!", photo);
+}
+
+async function sendGirl(msgInfoObject) {
+  const sources = ["-29937425", "-11695248", "-132029645", "-52347284"];
+  const level = Math.floor(Math.random() * 4);
+  let photo = await vkMethods.getPhoto(sources[level], "wall");
+
+  vkMethods.sendMessage(msgInfoObject.peer_id, "Ваша тяночка!", photo);
 }
 
 async function betterPictureFind(msgInfoObject, picUrl) {
