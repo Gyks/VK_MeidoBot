@@ -62,7 +62,12 @@ async function uploadPhotoViaUrlAsync(peer_id, photoUrl, callback) {
 }
 
 async function getPhoto(owner_id, album_id) {
-  let offset = Math.floor(Math.random() * 9899);
+  const generateOffset = () => {
+    const level = Math.floor(Math.random() * 3) + 1;
+    const offset = 3266;
+    return Math.floor(Math.random() * offset * level) + 1;
+  };
+  let offset = generateOffset();
   let url = baseUrl + "photos.get";
   const body = await axios.get(url, {
     params: {

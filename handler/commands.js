@@ -1,6 +1,6 @@
 require("dotenv").config();
-const vkMethods = require("./vkApiMethods");
-const fgo = require("./fgoGacha");
+const vkMethods = require("./vk_api");
+const fgo = require("./fgo_gacha");
 const api_key = process.env.API_TOKEN_DANBOORU;
 const login = process.env.DANBOORU_LOGIN;
 const sauce_api_key = process.env.SAUCE_NAO_TOKEN;
@@ -15,7 +15,8 @@ const commandsList = {
   еще: someMore,
   ещё: someMore,
   мейдочку: sendMaid,
-  help: sendHelp
+  help: sendHelp,
+  тяночку: sendGirl
 };
 
 async function findPicture(msgInfoObject, picUrl) {
@@ -216,6 +217,14 @@ async function sendMaid(msgInfoObject) {
   let photo = await vkMethods.getPhoto("-78638180", "wall");
 
   vkMethods.sendMessage(msgInfoObject.peer_id, "Ваша мейдочка!", photo);
+}
+
+async function sendGirl(msgInfoObject) {
+  const sources = ["-29937425", "-11695248", "-132029645", "-52347284"];
+  const level = Math.floor(Math.random() * 4);
+  let photo = await vkMethods.getPhoto(sources[level], "wall");
+
+  vkMethods.sendMessage(msgInfoObject.peer_id, "Ваша тяночка!", photo);
 }
 
 async function betterPictureFind(msgInfoObject, picUrl) {
