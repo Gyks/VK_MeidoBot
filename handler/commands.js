@@ -1,6 +1,6 @@
 require("dotenv").config();
-const vkMethods = require("./vkApiMethods");
-const fgo = require("./fgoGacha");
+const vkMethods = require("./vk_api");
+const fgo = require("./fgo_gacha");
 const api_key = process.env.API_TOKEN_DANBOORU;
 const login = process.env.DANBOORU_LOGIN;
 const sauce_api_key = process.env.SAUCE_NAO_TOKEN;
