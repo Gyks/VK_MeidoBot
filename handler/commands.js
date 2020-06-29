@@ -4,28 +4,312 @@ const fgo = require("./fgo_gacha");
 const api_key = process.env.API_TOKEN_DANBOORU;
 const login = process.env.DANBOORU_LOGIN;
 const sauce_api_key = process.env.SAUCE_NAO_TOKEN;
-const HTMLParser = require("node-html-parser");
 const axios = require("axios");
+const keyboard = {
+  buttons: [
+    [
+      {
+        action: {
+          type: "text",
+          label: "Мейдочку",
+          payload: '{"command":"мейдочку"}'
+        },
+        color: "primary"
+      },
+      {
+        action: {
+          type: "text",
+          label: "Тяночку",
+          payload: '{"command":"тяночку"}'
+        },
+        color: "negative"
+      }
+    ]
+  ],
+  inline: true
+};
 
 const commandsList = {
-  найди: findPicture,
   поищи: betterPictureFind,
   гача: simulateGacha,
-  техас: sendTexas,
+  арк: sendArk,
   еще: someMore,
   ещё: someMore,
   мейдочку: sendMaid,
   help: sendHelp,
-  тяночку: sendGirl
+  тяночку: sendGirl,
+  асочку: sendAska
 };
 
-async function findPicture(msgInfoObject, picUrl) {
-  // определяем есть ли picUrl, если нет смотрим в аттачах
-  const addHttps = m => {
-    m.substring(0, 4) == "http" ? m : (m = "https:" + m);
-    return m;
-  };
+function simulateGacha(msgInfoObject) {
+  let pulled = fgo.gacha();
+  let msg = "Вы выбили это, десу: \n";
+  for (let item of pulled) {
+    msg += item + "; \n";
+  }
+  vkMethods.sendMessage(msgInfoObject.peer_id, msg);
+}
 
+async function sendArk(msgInfoObject) {
+  // арк кальцит
+  let waifu;
+  const listOfWaifus = {
+    техас: "texas_(arknights)",
+    амия: "amiya_(arknights)",
+    кальцит: "kal'tsit_(arknights)",
+    сиджа: "siege_(arknights)",
+    лапа: "lappland_(arknights)",
+    скади: "skadi_(arknights)",
+    эхуй: "exusiai_(arknights)",
+    член: "ch'en_(arknights)",
+    метеорит: "meteorite_(arknights)",
+    сария: "saria_(arknights)"
+  };
+  if (msgInfoObject.payload) {
+    let command = JSON.parse(msgInfoObject.payload).command.split(" ");
+    waifu = listOfWaifus[command[1]];
+  } else {
+    let text = msgInfoObject.text.split(" ");
+    waifu = listOfWaifus[text[2]];
+  }
+
+  const keyboard = {
+    buttons: [
+      [
+        {
+          action: {
+            type: "text",
+            label: "Кальцит",
+            payload: '{"command":"арк кальцит"}'
+          },
+          color: "secondary"
+        },
+        {
+          action: {
+            type: "text",
+            label: "Техас",
+            payload: '{"command":"арк техас"}'
+          },
+          color: "secondary"
+        },
+        {
+          action: {
+            type: "text",
+            label: "Амия",
+            payload: '{"command":"арк амия"}'
+          },
+          color: "secondary"
+        },
+        {
+          action: {
+            type: "text",
+            label: "Сиджа",
+            payload: '{"command":"арк сиджа"}'
+          },
+          color: "secondary"
+        },
+        {
+          action: {
+            type: "text",
+            label: "Лапа",
+            payload: '{"command":"арк лапа"}'
+          },
+          color: "secondary"
+        }
+      ],
+      [
+        {
+          action: {
+            type: "text",
+            label: "Скади",
+            payload: '{"command":"арк скади"}'
+          },
+          color: "secondary"
+        },
+        {
+          action: {
+            type: "text",
+            label: "Эхуй",
+            payload: '{"command":"арк эхуй"}'
+          },
+          color: "secondary"
+        },
+        {
+          action: {
+            type: "text",
+            label: "Член",
+            payload: '{"command":"арк член"}'
+          },
+          color: "secondary"
+        },
+        {
+          action: {
+            type: "text",
+            label: "Метеорит",
+            payload: '{"command":"арк метеорит"}'
+          },
+          color: "secondary"
+        },
+        {
+          action: {
+            type: "text",
+            label: "Сария",
+            payload: '{"command":"арк сария"}'
+          },
+          color: "secondary"
+        }
+      ]
+    ],
+    inline: true
+  };
+  const body = await axios.get("https://danbooru.donmai.us/posts.json", {
+    params: {
+      login: login,
+      api_key: api_key,
+      tags: waifu,
+      limit: 1,
+      random: true
+    }
+  });
+  arkPictureUrl = body.data[0].large_file_url;
+  vkMethods.uploadPhotoViaUrlAsync(
+    msgInfoObject.peer_id,
+    arkPictureUrl,
+    photoInfo => {
+      vkMethods.sendMessage(
+        msgInfoObject.peer_id,
+        `Ваша вайфу!`,
+        "photo" +
+          photoInfo.owner_id +
+          "_" +
+          photoInfo.id +
+          "_" +
+          photoInfo.access_key,
+        keyboard
+      );
+    }
+  );
+}
+
+async function sendAska(msgInfoObject) {
+  const keyboard = {
+    buttons: [
+      [
+        {
+          action: {
+            type: "text",
+            label: "Асочку",
+            payload: '{"command":"асочку"}'
+          },
+          color: "negative"
+        }
+      ]
+    ],
+    inline: true
+  };
+  const tags = ["souryuu_asuka_langley", "shikinami_asuka_langley"];
+  const tag = tags[Math.round(Math.random())];
+  const body = await axios.get("https://danbooru.donmai.us/posts.json", {
+    params: {
+      login: login,
+      api_key: api_key,
+      tags: tag + " ass",
+      limit: 1,
+      random: true
+    }
+  });
+  PictureUrl = body.data[0].large_file_url;
+  vkMethods.uploadPhotoViaUrlAsync(
+    msgInfoObject.peer_id,
+    PictureUrl,
+    photoInfo => {
+      vkMethods.sendMessage(
+        msgInfoObject.peer_id,
+        `Правильная асочка!`,
+        "photo" +
+          photoInfo.owner_id +
+          "_" +
+          photoInfo.id +
+          "_" +
+          photoInfo.access_key,
+        keyboard
+      );
+    }
+  );
+}
+
+async function someMore(msgInfoObject) {
+  let artist;
+
+  if (msgInfoObject.payload) {
+    artist = JSON.parse(msgInfoObject.payload).artist;
+  } else return;
+
+  const anotherPic = await axios.get("https://danbooru.donmai.us/posts.json", {
+    params: {
+      login: login,
+      api_key: api_key,
+      tags: artist,
+      limit: 1,
+      random: true
+    }
+  });
+  let picUrl = anotherPic.data[0].large_file_url;
+  const keyboardMore = {
+    buttons: [
+      [
+        {
+          action: {
+            type: "text",
+            label: "Ещё",
+            payload: { command: "ещё", artist: artist }
+          },
+          color: "positive"
+        }
+      ]
+    ],
+    inline: true
+  };
+  vkMethods.uploadPhotoViaUrlAsync(msgInfoObject.peer_id, picUrl, photoInfo => {
+    vkMethods.sendMessage(
+      msgInfoObject.peer_id,
+      "ЕЩЁ!",
+      "photo" +
+        photoInfo.owner_id +
+        "_" +
+        photoInfo.id +
+        "_" +
+        photoInfo.access_key,
+      keyboardMore
+    );
+  });
+}
+
+async function sendMaid(msgInfoObject) {
+  let photo = await vkMethods.getPhoto("-78638180", "wall");
+
+  vkMethods.sendMessage(
+    msgInfoObject.peer_id,
+    "Ваша мейдочка!",
+    photo,
+    keyboard
+  );
+}
+
+async function sendGirl(msgInfoObject) {
+  const sources = ["-29937425", "-11695248", "-132029645", "-52347284"];
+  const level = Math.floor(Math.random() * 4);
+  let photo = await vkMethods.getPhoto(sources[level], "wall");
+
+  vkMethods.sendMessage(
+    msgInfoObject.peer_id,
+    "Ваша тяночка!",
+    photo,
+    keyboard
+  );
+}
+
+async function betterPictureFind(msgInfoObject, picUrl) {
   if (picUrl && picUrl.includes("https://")) {
   } else if (msgInfoObject.attachments.length) {
     picUrl = msgInfoObject.attachments[0].photo.sizes.slice(-1)[0].url;
@@ -36,56 +320,36 @@ async function findPicture(msgInfoObject, picUrl) {
     vkMethods.sendMessage(msgInfoObject.peer_id, "Неправилный запрос.");
     return;
   }
-
-  const body = await axios.get("https://iqdb.org/", {
+  const result = await axios.get("https://saucenao.com/search.php", {
     params: {
+      output_type: 2,
+      api_key: sauce_api_key,
+      db: 999,
+      numres: 5,
       url: picUrl
     }
   });
-
-  let parsed = HTMLParser.parse(body.data).querySelectorAll(
-    "#pages.pages div table tr"
-  );
-  // На iqdb первые 4 вхождения по правилу выше - картинка, которую мы отправили, убираем их
-  parsed = parsed.slice(4);
-
-  // Группируем инфу о каждом совпадении по 5 (кол-во tr в table для каждой пикчи)
-
-  let pictureInfo = []; //массив инфы по одной картинке
-  let pictureLinks = []; //массив линков на посты с картинками для поиска дополнительной картинки по автору
-  let message = "Я нашла это, десу: \n";
-  for (let i = 0; i < parsed.length; i++) {
-    pictureInfo.push(parsed[i]);
-    // группируем по 5 и пихаем нужную инфу в сообщение, очищаем инфу для следующей пикчи
-    if ((i + 1) % 5 == 0) {
-      // всратый DOM требует всратый парсер...
-      let picLink = addHttps(
-        pictureInfo[1]
-          .querySelectorAll(".image a")[0]
-          .rawAttrs.slice(6)
-          .slice(0, -1)
-      );
-
-      pictureLinks.push(picLink);
-      message +=
-        picLink +
-        " с " +
-        pictureInfo[4]
-          .querySelectorAll("td")[0]
-          .childNodes[0].toString()
-          .slice(0, 4) +
-        "похожестью" +
-        "\n";
-      pictureInfo = [];
+  let message = "Ваша мейдочка нашла это:\n";
+  const picLinks = [];
+  for (let item of result.data.results) {
+    if (item.data.ext_urls != undefined) {
+      message += item.data.ext_urls[0];
+      picLinks.push(...item.data.ext_urls);
     }
+    if (item.data.titleundefined) {
+      message += " " + item.data.title;
+    } else if (item.data.source) {
+      message += " " + item.data.source;
+    }
+    message += " с похожестью " + item.header.similarity + "%\n";
   }
 
-  // функция, которая принимает ссылку на пост на данбуре и выдаёт урлу картинки того же автора
   const findArtistSendAnotherPic = async picLink => {
     const toLjson = l => {
       // если нет danbooru, то ничего не присылаем
       if (l.includes("danbooru") ? false : true) return null;
-      return l + ".json";
+      let re = /\d+/;
+      return `https://danbooru.donmai.us/posts/${l.match(re)}.json`;
     };
     picLink = toLjson(picLink);
     if (picLink === null) return;
@@ -111,14 +375,41 @@ async function findPicture(msgInfoObject, picUrl) {
     return { url: anotherPic.data[0].large_file_url, artist: artist };
   };
 
-  // если команда расширенная, то ищем ещё одну картинку с этим автором и кидаем
   if (
     msgInfoObject.text.includes("еще") ||
     msgInfoObject.text.includes("ещё")
   ) {
-    for (let picLink of pictureLinks) {
+    let notFound = true;
+    for (let picLink of picLinks) {
       const anotherPic = await findArtistSendAnotherPic(picLink);
       if (anotherPic && anotherPic.url) {
+        const keyboardMore = {
+          buttons: [
+            [
+              {
+                action: {
+                  type: "open_link",
+                  link:
+                    "https://danbooru.donmai.us/posts?tags=" +
+                    anotherPic.artist,
+                  label: anotherPic.artist,
+                  payload: ""
+                }
+              }
+            ],
+            [
+              {
+                action: {
+                  type: "text",
+                  label: "Ещё",
+                  payload: { command: "ещё", artist: anotherPic.artist }
+                },
+                color: "positive"
+              }
+            ]
+          ],
+          inline: true
+        };
         vkMethods.uploadPhotoViaUrlAsync(
           msgInfoObject.peer_id,
           anotherPic.url,
@@ -131,134 +422,20 @@ async function findPicture(msgInfoObject, picUrl) {
                 "_" +
                 photoInfo.id +
                 "_" +
-                photoInfo.access_key
+                photoInfo.access_key,
+              keyboardMore
             );
           }
         );
+        notFound = false;
         break;
       }
     }
+    if (notFound)
+      vkMethods.sendMessage(msgInfoObject.peer_id, "Что-то ничего нет...");
   } else {
-    // если команда не расширена, то выдаём обычный результат
     vkMethods.sendMessage(msgInfoObject.peer_id, message);
   }
-}
-
-function simulateGacha(msgInfoObject) {
-  let pulled = fgo.gacha();
-  let msg = "Вы выбили это, десу: \n";
-  for (let item of pulled) {
-    msg += item + "; \n";
-  }
-  vkMethods.sendMessage(msgInfoObject.peer_id, msg);
-}
-
-async function sendTexas(msgInfoObject) {
-  const body = await axios.get("https://danbooru.donmai.us/posts.json", {
-    params: {
-      login: login,
-      api_key: api_key,
-      tags: "texas_(arknights)",
-      limit: 1,
-      random: true
-    }
-  });
-  texasPictureUrl = body.data[0].large_file_url;
-  vkMethods.uploadPhotoViaUrlAsync(
-    msgInfoObject.peer_id,
-    texasPictureUrl,
-    photoInfo => {
-      vkMethods.sendMessage(
-        msgInfoObject.peer_id,
-        "Ваша тексас!",
-        "photo" +
-          photoInfo.owner_id +
-          "_" +
-          photoInfo.id +
-          "_" +
-          photoInfo.access_key
-      );
-    }
-  );
-}
-
-async function someMore(msgInfoObject) {
-  let artist;
-  let text = msgInfoObject.reply_message.text;
-  if (text.includes("Я ещё кое-что нашла!") || text.includes("ЕЩЁ!"))
-    artist = text.split("\n")[1];
-  else return;
-  const anotherPic = await axios.get("https://danbooru.donmai.us/posts.json", {
-    params: {
-      login: login,
-      api_key: api_key,
-      tags: artist,
-      limit: 1,
-      random: true
-    }
-  });
-  let picUrl = anotherPic.data[0].large_file_url;
-  console.log(artist);
-  vkMethods.uploadPhotoViaUrlAsync(msgInfoObject.peer_id, picUrl, photoInfo => {
-    vkMethods.sendMessage(
-      msgInfoObject.peer_id,
-      "ЕЩЁ! \n" + artist,
-      "photo" +
-        photoInfo.owner_id +
-        "_" +
-        photoInfo.id +
-        "_" +
-        photoInfo.access_key
-    );
-  });
-}
-
-async function sendMaid(msgInfoObject) {
-  let photo = await vkMethods.getPhoto("-78638180", "wall");
-
-  vkMethods.sendMessage(msgInfoObject.peer_id, "Ваша мейдочка!", photo);
-}
-
-async function sendGirl(msgInfoObject) {
-  const sources = ["-29937425", "-11695248", "-132029645", "-52347284"];
-  const level = Math.floor(Math.random() * 4);
-  let photo = await vkMethods.getPhoto(sources[level], "wall");
-
-  vkMethods.sendMessage(msgInfoObject.peer_id, "Ваша тяночка!", photo);
-}
-
-async function betterPictureFind(msgInfoObject, picUrl) {
-  if (picUrl && picUrl.includes("https://")) {
-  } else if (msgInfoObject.attachments.length) {
-    picUrl = msgInfoObject.attachments[0].photo.sizes.slice(-1)[0].url;
-  } else if (msgInfoObject.reply_message.attachments.length) {
-    picUrl = msgInfoObject.reply_message.attachments[0].photo.sizes.slice(-1)[0]
-      .url;
-  } else {
-    vkMethods.sendMessage(msgInfoObject.peer_id, "Неправилный запрос.");
-    return;
-  }
-  const result = await axios.get("https://saucenao.com/search.php", {
-    params: {
-      output_type: 2,
-      api_key: sauce_api_key,
-      db: 999,
-      numres: 5,
-      url: picUrl
-    }
-  });
-  let message = "Ваша мейдочка нашла это:\n";
-  for (let item of result.data.results) {
-    console.log(item);
-    if (item.data.ext_urls != undefined) message += item.data.ext_urls[0];
-    if (item.data.titleundefined) {
-      message += " " + item.data.title;
-    } else if (item.data.source) {
-      message += " " + item.data.source;
-    }
-    message += " с вероятностью " + item.header.similarity + "%\n";
-  }
-  vkMethods.sendMessage(msgInfoObject.peer_id, message);
 }
 
 async function sendHelp(msgInfoObject) {
