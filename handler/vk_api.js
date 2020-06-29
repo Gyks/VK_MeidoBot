@@ -6,7 +6,7 @@ const TOKEN = process.env.TOKEN;
 const SERVICE_TOKEN = process.env.SERVICE_TOKEN;
 const v = "5.103";
 
-async function sendMessage(peer_id, message, attachment) {
+async function sendMessage(peer_id, message, attachment, keyboard = {}) {
   let url = baseUrl + "messages.send";
   const body = axios.get(url, {
     params: {
@@ -15,6 +15,7 @@ async function sendMessage(peer_id, message, attachment) {
       attachment: attachment,
       random_id: Math.random(),
       access_token: TOKEN,
+      keyboard: keyboard,
       v: v
     }
   });
@@ -43,7 +44,6 @@ async function uploadPhotoViaUrlAsync(peer_id, photoUrl, callback) {
     headers: form.getHeaders()
   });
 
-  console.log(uploadedPhotoPayload.data);
   let saveMessagesPhoto = await axios.get(
     baseUrl + "photos.saveMessagesPhoto",
     {
